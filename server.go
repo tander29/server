@@ -19,6 +19,27 @@ type User struct {
 	Phone string `json:"phone"`
 }
 
+type Animal struct {
+	Id      int    `json:"id"`
+	Species string `json:"species"`
+	Sound   string `json:"sound"`
+}
+
+func jsonAnimal(w http.ResponseWriter, req *http.Request) {
+	// what is w
+	enableCors(&w)
+	w.Header().Set("Content-Type", "application/json")
+	sound := req.URL.Query()["sound"]
+	animal := Animal{
+		Id:      1,
+		Species: "Cat",
+		Sound:   sound[0],
+	}
+	// fmt.Println(&w)
+	// fmt.Fprintf(w, "%v", req.Header)
+	json.NewEncoder(w).Encode(animal)
+}
+
 func jsonHandler(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
@@ -44,5 +65,6 @@ func main() {
 
 	http.HandleFunc("/json", jsonHandler)
 
+	http.HandleFunc("/json/animal", jsonAnimal)
 	log.Fatal(http.ListenAndServe(":8081", nil))
 }
